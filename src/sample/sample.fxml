@@ -1,0 +1,22 @@
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.HBox?>
+<HBox>
+    <children>
+        <TextArea/>
+        <VBox>
+            <children>
+                <Label text="От кого:"/>
+                <TextArea/>
+                <Label text="Кому:"/>
+                <TextArea/>
+                <Label text="Тема:"/>
+                <TextArea/>
+                <Label text="Сообщение:"/>
+                <TextArea/>
+                <Label text="Прикрепить файлы:"/>
+            </children>
+        </VBox>
+    </children>
+</HBox>
