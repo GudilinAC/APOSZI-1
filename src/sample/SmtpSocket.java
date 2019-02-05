@@ -18,8 +18,6 @@ public class SmtpSocket {
         try
         {
             socket = (SSLSocket) SSLSocketFactory.getDefault().createSocket("smtp.gmail.com", 465);
-           // socket = SSLSocketFactory.getDefault("smtp.gmail.com", 587);
-            //socket = new Socket(host, 587);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             System.out.println(in.readLine());

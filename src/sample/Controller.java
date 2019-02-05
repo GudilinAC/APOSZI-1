@@ -1,6 +1,7 @@
 package sample;
 
-import javax.naming.ldap.StartTlsRequest;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 public class Controller {
     private View view;
@@ -11,10 +12,12 @@ public class Controller {
     }
 
     public void testSock() {
-        //System.out.println(new String (Base64.getDecoder().decode("VXNlcm5hbWU6"), StandardCharsets.UTF_8));
-
         sock.connect("smtp.gmail.com");
-        sock.send("EHLO 192.168.100.12");
+        try {
+            sock.send("EHLO " + InetAddress.getLocalHost().getHostAddress());
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
         sock.send("AUTH LOGIN");
         sock.sendBase64("GudilinAC@gmail.com");
         sock.sendBase64("Andrey01");
