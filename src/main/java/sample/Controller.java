@@ -3,15 +3,16 @@ package sample;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-public class Controller {
+class Controller {
     private View view;
-    private SmtpSocket sock = new SmtpSocket();
+    private SmtpSocket sock;
 
-    public void setView(View view) {
+    Controller(View view) {
         this.view = view;
+        sock = new SmtpSocket(view::log);
     }
 
-    public void testSock() {
+    void testSock() {
         sock.connect("smtp.gmail.com");
         try {
             sock.send("EHLO " + InetAddress.getLocalHost().getHostAddress());

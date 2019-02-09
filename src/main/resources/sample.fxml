@@ -2,21 +2,19 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.HBox?>
-<HBox>
-    <children>
-        <TextArea/>
-        <VBox>
-            <children>
-                <Label text="От кого:"/>
-                <TextArea/>
-                <Label text="Кому:"/>
-                <TextArea/>
-                <Label text="Тема:"/>
-                <TextArea/>
-                <Label text="Сообщение:"/>
-                <TextArea/>
-                <Label text="Прикрепить файлы:"/>
-            </children>
-        </VBox>
-    </children>
+<?import javafx.scene.control.Button?>
+<HBox xmlns:fx = "http://javafx.com/fxml" fx:controller="sample.View">
+    <TextArea editable="false" fx:id="logArea"/>
+    <VBox>
+        <Label text="От кого:"/>
+        <TextArea fx:id="from"/>
+        <Label text="Кому:"/>
+        <TextArea fx:id="to"/>
+        <Label text="Тема:"/>
+        <TextArea fx:id="topic"/>
+        <Label text="Сообщение:"/>
+        <TextArea fx:id="text"/>
+        <Label text="Прикрепить файлы:"/>
+        <Button text="Test" onAction="#test"/>
+    </VBox>
 </HBox>
