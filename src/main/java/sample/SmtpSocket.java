@@ -11,47 +11,42 @@ class SmtpSocket {
     private BufferedReader in;
     private BufferedWriter out;
 
-    public SmtpSocket(Consumer<String> logger) {
+    SmtpSocket(Consumer<String> logger) {
         this.logger = logger;
     }
 
-    void connect(String host) {
-        try {
-            SSLSocket socket = (SSLSocket) SSLSocketFactory.getDefault().createSocket(host, 465);
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-            logger.accept(in.readLine());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    int connect(String host) throws IOException {
+        SSLSocket socket = (SSLSocket) SSLSocketFactory.getDefault().createSocket(host, 465);
+        in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+        String answer = in.readLine();
+        logger.accept(answer);
+        return Integer.parseInt(answer.substring(0, 3));
 
     }
 
-    String send(String message) {
-        try {
-            logger.accept(message);
-            out.write(message + "\r\n");
-            out.flush();
-            logger.accept(in.readLine());
-            if (in.ready())
-                do {
-                    logger.accept(in.readLine());
-                } while (in.ready());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+    int send(String message) throws IOException {
+        logger.accept(message);
+        sendData(message + "\r\n");
+        String answer = in.readLine();
+        logger.accept(answer);
+        if (in.ready())
+            do {
+                logger.accept(in.readLine());
+            } while (in.ready());
+        return Integer.parseInt(answer.substring(0, 3));
     }
 
-    String sendBase64(String message) {
-        try {
-            logger.accept(message + " (Base64)");
-            out.write(Base64.getEncoder().encodeToString(message.getBytes()) + "\r\n");
-            out.flush();
-            logger.accept(in.readLine());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+    int sendBase64(String message) throws IOException {
+        logger.accept(message + " (Base64)");
+        sendData(Base64.getEncoder().encodeToString(message.getBytes()) + "\r\n");
+        String answer = in.readLine();
+        logger.accept(answer);
+        return Integer.parseInt(answer.substring(0, 3));
+    }
+
+    void sendData(String message) throws IOException {
+        out.write(message);
+        out.flush();
     }
 }

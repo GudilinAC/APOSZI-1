@@ -8,6 +8,8 @@
     <VBox>
         <Label text="От кого:"/>
         <TextArea fx:id="from"/>
+        <Label text="Пароль"/>
+        <TextArea fx:id="password"/>
         <Label text="Кому:"/>
         <TextArea fx:id="to"/>
         <Label text="Тема:"/>
@@ -15,6 +17,6 @@
         <Label text="Сообщение:"/>
         <TextArea fx:id="text"/>
         <Label text="Прикрепить файлы:"/>
-        <Button text="Test" onAction="#test"/>
+        <Button fx:id="sendBtn" text="Отправить" onAction="#send"/>
     </VBox>
 </HBox>
