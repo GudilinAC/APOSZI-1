@@ -10,6 +10,7 @@ class SmtpSocket {
     private Consumer<String> logger;
     private BufferedReader in;
     private BufferedWriter out;
+    private boolean inBase64 = false;
 
     SmtpSocket(Consumer<String> logger) {
         this.logger = logger;
@@ -25,9 +26,19 @@ class SmtpSocket {
 
     }
 
-    int send(String message) throws IOException {
+    SmtpSocket base64(){
+        inBase64 = true;
+        return this;
+    }
+
+    SmtpSocket send(String message) throws IOException {
         logger.accept(message);
-        sendData(message + "\r\n");
+        sendData(inBase64 ? Base64.getEncoder().encodeToString(message.getBytes()) : message);
+        return this;
+    }
+
+    int end() throws IOException{
+        sendData("\r\n");
         String answer = in.readLine();
         logger.accept(answer);
         if (in.ready())
@@ -37,15 +48,7 @@ class SmtpSocket {
         return Integer.parseInt(answer.substring(0, 3));
     }
 
-    int sendBase64(String message) throws IOException {
-        logger.accept(message + " (Base64)");
-        sendData(Base64.getEncoder().encodeToString(message.getBytes()) + "\r\n");
-        String answer = in.readLine();
-        logger.accept(answer);
-        return Integer.parseInt(answer.substring(0, 3));
-    }
-
-    void sendData(String message) throws IOException {
+    private void sendData(String message) throws IOException {
         out.write(message);
         out.flush();
     }
