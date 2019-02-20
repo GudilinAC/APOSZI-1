@@ -1,7 +1,7 @@
 package sample;
 
-public class TemporaryExeption extends Exception {
-    TemporaryExeption(){
+public class TemporaryException extends Exception {
+    TemporaryException(){
         super("Сервер временно недоступен, повторите позже");
     }
 }

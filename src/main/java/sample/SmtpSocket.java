@@ -23,7 +23,6 @@ class SmtpSocket {
         String answer = in.readLine();
         logger.accept(answer);
         return Integer.parseInt(answer.substring(0, 3));
-
     }
 
     SmtpSocket base64(){
@@ -34,6 +33,7 @@ class SmtpSocket {
     SmtpSocket send(String message) throws IOException {
         logger.accept(message);
         sendData(inBase64 ? Base64.getEncoder().encodeToString(message.getBytes()) : message);
+        inBase64 = false;
         return this;
     }
 

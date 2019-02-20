@@ -15,19 +15,21 @@ public class SmtpSender extends Thread {
 
     @Override
     public void run() {
+        String message = MimeMessage.getMessage(mail);
+
         try {
             String ip = getIp();
             connect();
             hello(ip);
             login();
             routs();
-            mail();
+            mail(message);
             quit();
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (TemporaryExeption e){
+        } catch (TemporaryException e){
             e.printStackTrace();
-        } catch (CodeExeption e) {
+        } catch (CodeException e) {
             e.printStackTrace();
         }
     }
@@ -36,39 +38,39 @@ public class SmtpSender extends Thread {
         return InetAddress.getLocalHost().getHostAddress();
     }
 
-    private void connect() throws IOException, TemporaryExeption, CodeExeption {
+    private void connect() throws IOException, TemporaryException, CodeException {
         checkCode(sock.connect("smtp.gmail.com"));
     }
 
-    private void hello(String ip) throws IOException, TemporaryExeption, CodeExeption {
+    private void hello(String ip) throws IOException, TemporaryException, CodeException {
         checkCode(sock.send("EHLO " + ip).end());
     }
 
-    private void login() throws IOException, TemporaryExeption, CodeExeption {
+    private void login() throws IOException, TemporaryException, CodeException {
         checkCode(sock.send("AUTH LOGIN").end());
         checkCode(sock.base64().send(mail.getTo()).end());
         checkCode(sock.base64().send(mail.getPassword()).end());
     }
 
-    private void routs() throws IOException, TemporaryExeption, CodeExeption {
+    private void routs() throws IOException, TemporaryException, CodeException {
         checkCode(sock.send("MAIL FROM:<" + mail.getTo() + ">").end());
         checkCode(sock.send("RCPT TO:<" + mail.getFrom() + ">").end());
     }
 
-    private void mail() throws IOException, TemporaryExeption, CodeExeption {
+    private void mail(String massage) throws IOException, TemporaryException, CodeException {
         checkCode(sock.send("DATA").end());
-        checkCode(sock.send(mail.getLetter() + "\r\n.").end());
+        checkCode(sock.send(massage).send("\r\n.").end());
     }
 
     private void quit() throws IOException {
         sock.send("QUIT").end();
     }
 
-    private void checkCode(int code) throws TemporaryExeption, CodeExeption{
+    private void checkCode(int code) throws TemporaryException, CodeException {
         if (code >= 200 && code <= 399)
             return;
         if (code >= 400 && code <= 499)
-            throw new TemporaryExeption();
-        throw new CodeExeption(code);
+            throw new TemporaryException();
+        throw new CodeException(code);
     }
 }

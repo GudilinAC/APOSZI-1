@@ -7,7 +7,7 @@ class Mail {
     private String to;
     private String password;
     private String from;
-    private String topic;
+    private String subject;
     private String letter;
     private List<File> attached;
 
@@ -23,8 +23,8 @@ class Mail {
         return from;
     }
 
-    String getTopic() {
-        return topic;
+    String getSubject() {
+        return subject;
     }
 
     String getLetter() {
@@ -39,7 +39,7 @@ class Mail {
         this.to = to;
         this.password = password;
         this.from = from;
-        this.topic = topic;
+        this.subject = topic;
         this.letter = letter;
         this.attached = attached;
     }

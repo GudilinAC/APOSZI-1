@@ -1,22 +1,22 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.Button?>
-<HBox xmlns:fx = "http://javafx.com/fxml" fx:controller="sample.View">
+<?import javafx.scene.control.SplitPane?>
+<SplitPane dividerPositions="0.4" xmlns:fx = "http://javafx.com/fxml" fx:controller="sample.View">
     <TextArea editable="false" fx:id="logArea"/>
     <VBox>
         <Label text="От кого:"/>
-        <TextArea fx:id="from"/>
+        <TextArea text="GudilinAC@gmail.com" prefRowCount="1" fx:id="from"/>
         <Label text="Пароль"/>
-        <TextArea fx:id="password"/>
+        <TextArea prefRowCount="1" fx:id="password"/>
         <Label text="Кому:"/>
-        <TextArea fx:id="to"/>
+        <TextArea text="GudilinAC@gmail.com" prefRowCount="1" fx:id="to"/>
         <Label text="Тема:"/>
-        <TextArea fx:id="topic"/>
+        <TextArea text="SMTP Test" prefRowCount="1" fx:id="topic"/>
         <Label text="Сообщение:"/>
-        <TextArea fx:id="text"/>
+        <TextArea text="fdsgsdgds" fx:id="text"/>
         <Label text="Прикрепить файлы:"/>
         <Button fx:id="sendBtn" text="Отправить" onAction="#send"/>
     </VBox>
-</HBox>
+</SplitPane>
