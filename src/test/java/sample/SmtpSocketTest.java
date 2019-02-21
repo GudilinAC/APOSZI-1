@@ -3,6 +3,7 @@ package sample;
 import org.junit.Test;
 
 public class SmtpSocketTest {
+
     @Test
     public void connect() {
     }

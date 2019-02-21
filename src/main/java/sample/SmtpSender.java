@@ -1,8 +1,10 @@
 package sample;
 
+import javax.mail.internet.MailDateFormat;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Date;
 
 public class SmtpSender extends Thread {
     private final Mail mail;
@@ -15,7 +17,7 @@ public class SmtpSender extends Thread {
 
     @Override
     public void run() {
-        String message = MimeMessage.getMessage(mail);
+        String message = makeMime();
 
         try {
             String ip = getIp();
@@ -43,27 +45,27 @@ public class SmtpSender extends Thread {
     }
 
     private void hello(String ip) throws IOException, TemporaryException, CodeException {
-        checkCode(sock.send("EHLO " + ip).end());
+        checkCode(sock.send("EHLO " + ip));
     }
 
     private void login() throws IOException, TemporaryException, CodeException {
-        checkCode(sock.send("AUTH LOGIN").end());
-        checkCode(sock.base64().send(mail.getTo()).end());
-        checkCode(sock.base64().send(mail.getPassword()).end());
+        checkCode(sock.send("AUTH LOGIN"));
+        checkCode(sock.sendBase64(mail.getTo()));
+        checkCode(sock.sendBase64(mail.getPassword()));
     }
 
     private void routs() throws IOException, TemporaryException, CodeException {
-        checkCode(sock.send("MAIL FROM:<" + mail.getTo() + ">").end());
-        checkCode(sock.send("RCPT TO:<" + mail.getFrom() + ">").end());
+        checkCode(sock.send("MAIL FROM:<" + mail.getTo() + ">"));
+        checkCode(sock.send("RCPT TO:<" + mail.getFrom() + ">"));
     }
 
     private void mail(String massage) throws IOException, TemporaryException, CodeException {
-        checkCode(sock.send("DATA").end());
-        checkCode(sock.send(massage).send("\r\n.").end());
+        checkCode(sock.send("DATA"));
+        checkCode(sock.send(massage + "\r\n."));
     }
 
     private void quit() throws IOException {
-        sock.send("QUIT").end();
+        sock.send("QUIT");
     }
 
     private void checkCode(int code) throws TemporaryException, CodeException {
@@ -72,5 +74,19 @@ public class SmtpSender extends Thread {
         if (code >= 400 && code <= 499)
             throw new TemporaryException();
         throw new CodeException(code);
+    }
+
+    private String makeMime(){
+        return "Date: " + date() + "\r\n" +
+                "From: " + mail.getFrom() + "\r\n" +
+                "To: " + mail.getTo() + "\r\n" +
+                "Subject: " + mail.getSubject() + "\r\n" +
+                "MIME-Version: 1.0\r\n" +
+                "Content-Type: text/plain; charset=UTF-8\r\n\r\n" +
+                mail.getLetter() + "\r\n";
+    }
+
+    private String date(){
+        return new MailDateFormat().format(new Date());
     }
 }
