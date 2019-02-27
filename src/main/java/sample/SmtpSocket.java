@@ -1,5 +1,7 @@
 package sample;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import java.io.*;
@@ -10,6 +12,7 @@ class SmtpSocket {
     private Consumer<String> logger;
     private BufferedReader in;
     private BufferedWriter out;
+    private OutputStream os;
 
     SmtpSocket(Consumer<String> logger) {
         this.logger = logger;
@@ -18,7 +21,8 @@ class SmtpSocket {
     int connect(String host) throws IOException {
         SSLSocket socket = (SSLSocket) SSLSocketFactory.getDefault().createSocket(host, 465);
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+        os = socket.getOutputStream();
+        out = new BufferedWriter(new OutputStreamWriter(os));
         String answer = in.readLine();
         logger.accept(answer);
         return Integer.parseInt(answer.substring(0, 3));
@@ -37,7 +41,19 @@ class SmtpSocket {
         return Integer.parseInt(answer.substring(0, 3));
     }
 
+    int send(MimeMessage massage) throws IOException {
+        try {
+            massage.writeTo(os);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+        os.flush();
+        return send("\r\n.");
+    }
+
     int sendBase64(String message) throws IOException{
         return send(Base64.getEncoder().encodeToString(message.getBytes()));
     }
+
+
 }
