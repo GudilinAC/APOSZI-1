@@ -16,6 +16,11 @@ public class View {
     @FXML private Button sendBtn;
     @FXML private TextArea logArea;
 
+    @FXML void send() {
+        sendBtn.setDisable(true);
+        controller.send(new Mail(to.getText(), password.getText(), from.getText(), topic.getText(), text.getText(), null));
+    }
+
     void endSending(boolean success) {
         if (success) log("------ Message successfully sended ------");
         else log("------ During sending an error has occurred ------");
@@ -24,10 +29,5 @@ public class View {
 
     void log(String string) {
         logArea.appendText(string + "\r\n");
-    }
-
-    public void send() {
-        sendBtn.setDisable(true);
-        controller.send(new Mail(to.getText(), password.getText(), from.getText(), topic.getText(), text.getText(), null));
     }
 }

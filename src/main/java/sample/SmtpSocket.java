@@ -10,9 +10,9 @@ import java.util.function.Consumer;
 
 class SmtpSocket {
     private Consumer<String> logger;
-    private BufferedReader in;
-    private BufferedWriter out;
-    private OutputStream os;
+    protected BufferedReader in;
+    protected BufferedWriter out;
+    protected OutputStream os;
 
     SmtpSocket(Consumer<String> logger) {
         this.logger = logger;
@@ -20,12 +20,16 @@ class SmtpSocket {
 
     int connect(String host) throws IOException {
         SSLSocket socket = (SSLSocket) SSLSocketFactory.getDefault().createSocket(host, 465);
-        in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        os = socket.getOutputStream();
-        out = new BufferedWriter(new OutputStreamWriter(os));
+        createStreams(socket);
         String answer = in.readLine();
         logger.accept(answer);
         return Integer.parseInt(answer.substring(0, 3));
+    }
+
+    protected void createStreams(SSLSocket socket) throws IOException{
+        os = socket.getOutputStream();
+        in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        out = new BufferedWriter(new OutputStreamWriter(os));
     }
 
     int send(String message) throws IOException {

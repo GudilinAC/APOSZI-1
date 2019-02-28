@@ -14,10 +14,8 @@ import static org.mockito.Mockito.*;
 public class ControllerTest {
     private Controller controller;
     @Mock private Mail mail = mock(Mail.class);
-    @Mock
-    private View view = mock(View.class);
-    @Mock
-    private SmtpSocket sock = mock(SmtpSocket.class);
+    @Mock private View view = mock(View.class);
+    @Mock private SmtpSocket sock = mock(SmtpSocket.class);
 
     @Test
     public void send() {
