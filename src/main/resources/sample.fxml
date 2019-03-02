@@ -7,17 +7,19 @@
 <SplitPane dividerPositions="0.4" xmlns:fx = "http://javafx.com/fxml" fx:controller="sample.View">
     <TextArea editable="false" fx:id="logArea"/>
     <VBox>
-        <Label text="От кого:"/>
+        <Label text="From:"/>
         <TextField text="GudilinAC@gmail.com" fx:id="from"/>
-        <Label text="Пароль"/>
+        <Label text="Password:"/>
         <TextField fx:id="password"/>
-        <Label text="Кому:"/>
+        <Label text="To:"/>
         <TextField text="GudilinAC@gmail.com" fx:id="to"/>
-        <Label text="Тема:"/>
+        <Label text="Subject:"/>
         <TextField text="SMTP Test" fx:id="topic"/>
-        <Label text="Сообщение:"/>
+        <Label text="Message:"/>
         <TextArea text="fdsgsdgds" fx:id="text"/>
-        <Label text="Прикрепить файлы:"/>
-        <Button fx:id="sendBtn" text="Отправить" onAction="#send"/>
+        <Label text="Attach files:"/>
+        <TextArea fx:id="attachments" editable="false"/>
+        <Button fx:id="chooseFileBtn" text="Attach" onAction="#attach"/>
+        <Button fx:id="sendBtn" text="Send" onAction="#send"/>
     </VBox>
 </SplitPane>

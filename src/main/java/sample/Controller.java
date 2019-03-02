@@ -1,9 +1,16 @@
 package sample;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.Multipart;
 import javax.mail.Session;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -100,7 +107,22 @@ class Controller {
             mimeMessage.setFrom(mail.getFrom());
             mimeMessage.addRecipients(Message.RecipientType.TO, mail.getTo());
             mimeMessage.setSubject(mail.getSubject());
-            mimeMessage.setText(mail.getLetter());
+
+            MimeBodyPart mimeBodyPart = new MimeBodyPart();
+            mimeBodyPart.setContent(mail.getLetter(), "text/plain");
+
+            Multipart multipart = new MimeMultipart();
+            multipart.addBodyPart(mimeBodyPart);
+
+            if (mail.getAttached() != null)
+                for (File file: mail.getAttached()) {
+                    mimeBodyPart = new MimeBodyPart();
+                    mimeBodyPart.setDataHandler(new DataHandler(new FileDataSource(file)));
+                    mimeBodyPart.setFileName(file.getName());
+                    multipart.addBodyPart(mimeBodyPart);
+                }
+
+            mimeMessage.setContent(multipart);
         } catch (MessagingException e) {
             e.printStackTrace();
         }
