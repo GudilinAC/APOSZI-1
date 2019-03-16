@@ -13,7 +13,7 @@ import java.util.List;
 
 public class View {
     private Stage primaryStage;
-    private final Controller controller = new Controller(this);
+    private Controller controller = new Controller(this);
     private List<File> attached;
     private FileChooser fileChooser = new FileChooser();
 

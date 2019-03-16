@@ -3,6 +3,8 @@
 
 .idea/
 target/
+lib/
+META-INF/
 
 # User-specific stuff
 .idea/**/workspace.xml
