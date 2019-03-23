@@ -1,7 +1,6 @@
 package sample;
 
 import javax.activation.DataHandler;
-import javax.activation.DataSource;
 import javax.activation.FileDataSource;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -35,7 +34,8 @@ class Controller {
     }
 
     private final Thread sendingThread = new Thread(() -> {
-        boolean result = true;
+        boolean result = false;
+        String errorMessage = null;
 
         MimeMessage message = makeMime();
 
@@ -47,44 +47,42 @@ class Controller {
             routs();
             mail(message);
             quit();
+            result = true;
         } catch (IOException e) {
-            result = false;
+            errorMessage = "Server is not responding. Check internet connection.";
             e.printStackTrace();
-        } catch (TemporaryException e){
-            result = false;
-            e.printStackTrace();
-        } catch (CodeException e) {
-            result = false;
+        } catch (SmtpException e) {
+            errorMessage = e.getMessage();
             e.printStackTrace();
         }
 
-        view.endSending(result);
+        view.endSending(result, errorMessage);
     });
 
     private String getIp() throws UnknownHostException {
         return InetAddress.getLocalHost().getHostAddress();
     }
 
-    private void connect() throws IOException, TemporaryException, CodeException {
+    private void connect() throws IOException, SmtpException {
         checkCode(sock.connect("smtp.gmail.com"));
     }
 
-    private void hello(String ip) throws IOException, TemporaryException, CodeException {
+    private void hello(String ip) throws IOException, SmtpException {
         checkCode(sock.send("EHLO " + ip));
     }
 
-    private void login() throws IOException, TemporaryException, CodeException {
+    private void login() throws IOException, SmtpException {
         checkCode(sock.send("AUTH LOGIN"));
         checkCode(sock.sendBase64(mail.getFrom()));
         checkCode(sock.sendBase64(mail.getPassword()));
     }
 
-    private void routs() throws IOException, TemporaryException, CodeException {
+    private void routs() throws IOException, SmtpException {
         checkCode(sock.send("MAIL FROM:<" + mail.getFrom() + ">"));
         checkCode(sock.send("RCPT TO:<" + mail.getTo() + ">"));
     }
 
-    private void mail(MimeMessage massage) throws IOException, TemporaryException, CodeException {
+    private void mail(MimeMessage massage) throws IOException, SmtpException {
         checkCode(sock.send("DATA"));
         checkCode(sock.send(massage));
     }
@@ -93,12 +91,12 @@ class Controller {
         sock.send("QUIT");
     }
 
-    private void checkCode(int code) throws TemporaryException, CodeException {
+    private void checkCode(int code) throws SmtpException {
         if (code >= 200 && code <= 399)
             return;
         if (code >= 400 && code <= 499)
-            throw new TemporaryException();
-        throw new CodeException(code);
+            throw new SmtpException("Server is temporarily unavailable with code " + code + ". Try to send later.");
+        throw new SmtpException("Server returned " + code + ". Check if the entered data is correct.");
     }
 
     private MimeMessage makeMime() {

@@ -1,6 +1,8 @@
 package sample;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -18,6 +20,7 @@ public class View {
     private Controller controller = new Controller(this);
     private List<File> attached = new ArrayList<>();
     private FileChooser fileChooser = new FileChooser();
+    private Alert alert = new Alert(Alert.AlertType.ERROR);
 
     @FXML private VBox inputArea;
     @FXML private TextField from;
@@ -29,6 +32,11 @@ public class View {
     @FXML private Button chooseFileBtn;
     @FXML private Button sendBtn;
     @FXML private TextArea logArea;
+
+    public View() {
+        alert.setTitle("Error");
+        alert.setHeaderText("Error during sending");
+    }
 
     void setStage(Stage stage){ primaryStage = stage; }
 
@@ -56,9 +64,13 @@ public class View {
         controller.send(new Mail(to.getText(), password.getText(), from.getText(), subject.getText(), text.getText(), attached));
     }
 
-    void endSending(boolean success) {
+    void endSending(boolean success, String errorMessage) {
         if (success) log("------ Message successfully sended ------");
-        else log("------ During sending an error has occurred ------");
+        else {
+            log("------ During sending an error has occurred ------");
+            alert.setContentText(errorMessage);
+            Platform.runLater(() -> alert.showAndWait());
+        }
         disableFields(false);
     }
 

@@ -15,7 +15,7 @@
         <Label text="To:"/>
         <TextField text="GudilinAC@gmail.com" fx:id="to"/>
         <Label text="Subject:"/>
-        <TextField text="SMTP Test" fx:id="topic"/>
+        <TextField text="SMTP Test" fx:id="subject"/>
         <Label text="Message:"/>
         <TextArea text="fdsgsdgds" fx:id="text"/>
         <Label text="Attach files:"/>

@@ -14,7 +14,6 @@ public class Main extends Application {
         this.primaryStage = primaryStage;
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/sample.fxml"));
         Parent root = loader.load();
-
         ((View)loader.getController()).setStage(primaryStage);
         primaryStage.setTitle("SMTP-client");
         primaryStage.setScene(new Scene(root, 1440, 900));

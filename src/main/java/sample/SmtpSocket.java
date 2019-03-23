@@ -22,7 +22,7 @@ class SmtpSocket {
         SSLSocket socket = (SSLSocket) SSLSocketFactory.getDefault().createSocket(host, 465);
         createStreams(socket);
         String answer = in.readLine();
-        logger.accept(answer);
+        logger.accept("Server: " + answer);
         return Integer.parseInt(answer.substring(0, 3));
     }
 
@@ -33,14 +33,14 @@ class SmtpSocket {
     }
 
     int send(String message) throws IOException {
-        logger.accept(message);
+        logger.accept("Client: " + message);
         out.write(message + "\r\n");
         out.flush();
         String answer = in.readLine();
-        logger.accept(answer);
+        logger.accept("Server: " + answer);
         if (in.ready())
             do {
-                logger.accept(in.readLine());
+                logger.accept("Server: " + in.readLine());
             } while (in.ready());
         return Integer.parseInt(answer.substring(0, 3));
     }
@@ -48,6 +48,7 @@ class SmtpSocket {
     int send(MimeMessage massage) throws IOException {
         try {
             massage.writeTo(os);
+            logger.accept("Sending message...");
         } catch (MessagingException e) {
             e.printStackTrace();
         }
