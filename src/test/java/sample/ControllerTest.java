@@ -42,7 +42,7 @@ public class ControllerTest {
         }
 
         controller.send(mail);
-        verify(view, timeout(5000).times(1)).endSending(true, anyString());
+        verify(view, timeout(5000).times(1)).endSending(eq(true), any());
     }
 
     @Before
