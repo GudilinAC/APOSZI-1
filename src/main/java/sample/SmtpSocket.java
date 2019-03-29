@@ -18,8 +18,8 @@ class SmtpSocket {
         this.logger = logger;
     }
 
-    int connect(String host) throws IOException {
-        SSLSocket socket = (SSLSocket) SSLSocketFactory.getDefault().createSocket(host, 465);
+    int connect(String host, int port) throws IOException {
+        SSLSocket socket = (SSLSocket) SSLSocketFactory.getDefault().createSocket(host, port);
         createStreams(socket);
         String answer = in.readLine();
         logger.accept("Server: " + answer);
@@ -59,6 +59,4 @@ class SmtpSocket {
     int sendBase64(String message) throws IOException{
         return send(Base64.getEncoder().encodeToString(message.getBytes()));
     }
-
-
 }

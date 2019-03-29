@@ -27,7 +27,7 @@ public class ControllerTest {
         when(mail.getAttached()).thenReturn(null);
 
         try {
-            when(sock.connect("smtp.gmail.com")).thenReturn(220);
+            when(sock.connect("smtp.b", 465)).thenReturn(220);
             when(sock.send("EHLO " + anyString())).thenReturn(250);
             when(sock.send("AUTH LOGIN")).thenReturn(334);
             when(sock.sendBase64("b")).thenReturn(334);

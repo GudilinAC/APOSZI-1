@@ -10,9 +10,11 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Properties;
 
 class Controller {
     private View view;
@@ -30,41 +32,49 @@ class Controller {
 
     void send(Mail mail) {
         this.mail = mail;
-        sendingThread.start();
+        new Thread(sendingMethod).start();
     }
 
-    private final Thread sendingThread = new Thread(() -> {
-        boolean result = false;
-        String errorMessage = null;
+    private final Runnable sendingMethod = new Runnable() {
+        @Override
+        public void run() {
+            boolean result = false;
+            String errorMessage = null;
 
-        MimeMessage message = makeMime();
+            MimeMessage message = makeMime();
 
-        try {
-            String ip = getIp();
-            connect();
-            hello(ip);
-            login();
-            routs();
-            mail(message);
-            quit();
-            result = true;
-        } catch (IOException e) {
-            errorMessage = "Server is not responding. Check internet connection.";
-            e.printStackTrace();
-        } catch (SmtpException e) {
-            errorMessage = e.getMessage();
-            e.printStackTrace();
+            try {
+                String ip = getIp();
+                connect();
+                hello(ip);
+                login();
+                routs();
+                mail(message);
+                quit();
+                result = true;
+            } catch (IOException e) {
+                errorMessage = "Server is not responding. Check internet connection.";
+                e.printStackTrace();
+            } catch (SmtpException e) {
+                errorMessage = e.getMessage();
+                e.printStackTrace();
+            }
+
+            view.endSending(result, errorMessage);
         }
-
-        view.endSending(result, errorMessage);
-    });
+    };
 
     private String getIp() throws UnknownHostException {
         return InetAddress.getLocalHost().getHostAddress();
     }
 
     private void connect() throws IOException, SmtpException {
-        checkCode(sock.connect("smtp.gmail.com"));
+        Properties properties = new Properties();
+        properties.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("servers.properties"));
+        String host = mail.getFrom().substring(mail.getFrom().indexOf("@") + 1);
+        String smtpHost = properties.getProperty(host, "smtp." + host);
+        int port = Integer.parseInt(properties.getProperty(host + "_port", "465"));
+        checkCode(sock.connect(smtpHost, port));
     }
 
     private void hello(String ip) throws IOException, SmtpException {
