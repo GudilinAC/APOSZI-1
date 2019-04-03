@@ -30,6 +30,10 @@ class Controller {
         this(view, new SmtpSocketFactory());
     }
 
+    /**
+     * Send mail via SMTP-protocol in another thread. As a callback calls "view.endSending" method
+     * @param mail contains sending data
+     */
     void send(Mail mail) {
         this.mail = mail;
         new Thread(sendingMethod).start();
@@ -81,7 +85,12 @@ class Controller {
         checkCode(sock.send("EHLO " + ip));
     }
 
-    private void login() throws IOException, SmtpException {
+    /**
+     * Авторизация на сервере. Может быть унаследован и изменен, для корректировки алгоритма авторизации
+     * @throws IOException посылает исключение, если в процессе отправки или считывания данных из сокета произошла ошибка (например из-за отключения интернета)
+     * @throws SmtpException посылает исключение, если сервер вернул код-ошибку
+     */
+    protected void login() throws IOException, SmtpException {
         checkCode(sock.send("AUTH LOGIN"));
         checkCode(sock.sendBase64(mail.getFrom()));
         checkCode(sock.sendBase64(mail.getPassword()));
@@ -101,6 +110,11 @@ class Controller {
         sock.send("QUIT");
     }
 
+    /**
+     * Check return codes from server of SMTP-protocol
+     * @param code code to check
+     * @throws SmtpException throws exception when see not 200-299 code (with different messages)
+     */
     private void checkCode(int code) throws SmtpException {
         if (code >= 200 && code <= 399)
             return;
@@ -117,7 +131,7 @@ class Controller {
             mimeMessage.setSubject(mail.getSubject());
 
             MimeBodyPart mimeBodyPart = new MimeBodyPart();
-            mimeBodyPart.setContent(mail.getLetter(), "text/plain");
+            mimeBodyPart.setContent(mail.getLetter(), "text/plain; charset=utf-8");
 
             Multipart multipart = new MimeMultipart();
             multipart.addBodyPart(mimeBodyPart);
